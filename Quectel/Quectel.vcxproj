@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GFH_Generator.exe" />
+    <None Include="header.dat" />
+    <None Include="libs\app_image_bin.cfg" />
+    <None Include="libs\gcc\linkscript.ld" />
+    <None Include="make.exe" />
+    <None Include="makefile" />
+    <None Include="makefiledef" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="config\custom_sys_cfg.c" />
+    <ClCompile Include="config\sys_config.c" />
+    <ClCompile Include="ril\src\ril_alarm.c" />
+    <ClCompile Include="ril\src\ril_atResponse.c" />
+    <ClCompile Include="ril\src\ril_audio.c" />
+    <ClCompile Include="ril\src\ril_bluetooth.c" />
+    <ClCompile Include="ril\src\ril_custom.c" />
+    <ClCompile Include="ril\src\ril_dtmf.c" />
+    <ClCompile Include="ril\src\ril_ftp.c" />
+    <ClCompile Include="ril\src\ril_http.c" />
+    <ClCompile Include="ril\src\ril_init.c" />
+    <ClCompile Include="ril\src\ril_location.c" />
+    <ClCompile Include="ril\src\ril_network.c" />
+    <ClCompile Include="ril\src\ril_sim.c" />
+    <ClCompile Include="ril\src\ril_sms.c" />
+    <ClCompile Include="ril\src\ril_system.c" />
+    <ClCompile Include="ril\src\ril_telephony.c" />
+    <ClCompile Include="ril\src\ril_urc.c" />
+    <ClCompile Include="ril\src\ril_util.c" />
+    <ClCompile Include="source\calendar.c" />
+    <ClCompile Include="source\events.c" />
+    <ClCompile Include="source\global.c" />
+    <ClCompile Include="source\incury.c" />
+    <ClCompile Include="source\main.c" />
+    <ClCompile Include="source\menu.c" />
+    <ClCompile Include="source\own_settings.c" />
+    <ClCompile Include="source\own_tcp.c" />
+    <ClCompile Include="source\rtc.c" />
+    <ClCompile Include="source\socket_th.c" />
+    <ClCompile Include="source\sunrise.c" />
+    <ClCompile Include="source\tcp_clients.c" />
+    <ClCompile Include="source\utility.c" />
+    <ClCompile Include="source\utils.c" />
+    <ClCompile Include="source\websrv.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config\custom_feature_def.h" />
+    <ClInclude Include="config\custom_gpio_cfg.h" />
+    <ClInclude Include="config\custom_heap_cfg.h" />
+    <ClInclude Include="config\custom_task_cfg.h" />
+    <ClInclude Include="include\calendar.h" />
+    <ClInclude Include="include\events.h" />
+    <ClInclude Include="include\incury.h" />
+    <ClInclude Include="include\menu.h" />
+    <ClInclude Include="include\own_settings.h" />
+    <ClInclude Include="include\qlobal.h" />
+    <ClInclude Include="include\ql_adc.h" />
+    <ClInclude Include="include\ql_clock.h" />
+    <ClInclude Include="include\ql_common.h" />
+    <ClInclude Include="include\ql_eint.h" />
+    <ClInclude Include="include\ql_error.h" />
+    <ClInclude Include="include\ql_fota.h" />
+    <ClInclude Include="include\ql_fs.h" />
+    <ClInclude Include="include\ql_gpio.h" />
+    <ClInclude Include="include\ql_gprs.h" />
+    <ClInclude Include="include\ql_iic.h" />
+    <ClInclude Include="include\ql_memory.h" />
+    <ClInclude Include="include\ql_power.h" />
+    <ClInclude Include="include\ql_pwm.h" />
+    <ClInclude Include="include\ql_socket.h" />
+    <ClInclude Include="include\ql_spi.h" />
+    <ClInclude Include="include\ql_stdlib.h" />
+    <ClInclude Include="include\ql_system.h" />
+    <ClInclude Include="include\ql_time.h" />
+    <ClInclude Include="include\ql_timer.h" />
+    <ClInclude Include="include\ql_trace.h" />
+    <ClInclude Include="include\ql_type.h" />
+    <ClInclude Include="include\ql_uart.h" />
+    <ClInclude Include="include\ql_wtd.h" />
+    <ClInclude Include="include\own_tcp.h" />
+    <ClInclude Include="include\rtc.h" />
+    <ClInclude Include="include\socket_th.h" />
+    <ClInclude Include="include\sunrise.h" />
+    <ClInclude Include="include\tcp_clients.h" />
+    <ClInclude Include="include\utils.h" />
+    <ClInclude Include="include\websrv.h" />
+    <ClInclude Include="ril\inc\lib_ril_sms.h" />
+    <ClInclude Include="ril\inc\ril.h" />
+    <ClInclude Include="ril\inc\ril_alarm.h" />
+    <ClInclude Include="ril\inc\ril_audio.h" />
+    <ClInclude Include="ril\inc\ril_bluetooth.h" />
+    <ClInclude Include="ril\inc\ril_dtmf.h" />
+    <ClInclude Include="ril\inc\ril_ftp.h" />
+    <ClInclude Include="ril\inc\ril_http.h" />
+    <ClInclude Include="ril\inc\ril_location.h" />
+    <ClInclude Include="ril\inc\ril_network.h" />
+    <ClInclude Include="ril\inc\ril_sim.h" />
+    <ClInclude Include="ril\inc\ril_sms.h" />
+    <ClInclude Include="ril\inc\ril_system.h" />
+    <ClInclude Include="ril\inc\ril_telephony.h" />
+    <ClInclude Include="ril\inc\ril_util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\gcc\app_start.lib" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AEDA1634-E28F-43E7-99E7-885A3E0CD038}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>Quectel.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>ARM;_DEBUG</NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)build</OutDir>
+    <IntDir />
+    <ExecutablePath>Quectel</ExecutablePath>
+    <IncludePath>include;config;ril\inc</IncludePath>
+    <ReferencePath>Quectel</ReferencePath>
+    <LibraryPath>
+    </LibraryPath>
+    <LibraryWPath />
+    <SourcePath>source</SourcePath>
+    <ExcludePath />
+    <NMakeBuildCommandLine>make all</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>make all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>Quectel.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <BuildLog>
+      <Path>build\log\$(MSBuildProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

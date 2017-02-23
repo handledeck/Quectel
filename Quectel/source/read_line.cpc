@@ -1,0 +1,135 @@
+#include <qlobal.h>
+
+
+#define SAM_IN_BUF_LEN 256
+char sam_in_buf[SAM_IN_BUF_LEN] = "\0";
+char* psam_in_buf = &sam_in_buf[0];
+
+void read_line(u8* in_data,u16 len) {
+	char out_data[SAM_IN_BUF_LEN];
+	char* pend;
+	if (len > 0) {
+	if (psam_in_buf - &sam_in_buf[0] > sizeof(sam_in_buf)) {
+	memset(sam_in_buf, 0, SAM_IN_BUF_LEN);
+	psam_in_buf = &sam_in_buf[0];
+	memset(sam_in_buf, 0, SAM_IN_BUF_LEN);
+	}
+	Ql_memcpy(psam_in_buf, in_data, len);
+	psam_in_buf += len;
+	while ((pend = strstr(sam_in_buf, "\r\n")) != NULL)
+	{
+	parce_sam_command(sam_in_buf, out_data);
+	u16 len = psam_in_buf - (pend + 2);
+	if (len > 0) {
+	char* tmem = (char*)Ql_MEM_Alloc(len);
+	Ql_memcpy(tmem, pend + 2, len);
+	Ql_memset(sam_in_buf, 0, SAM_IN_BUF_LEN);
+	Ql_memcpy(sam_in_buf, tmem, len);
+	Ql_MEM_Free(tmem);
+	psam_in_buf = &sam_in_buf[Ql_strlen(sam_in_buf)];
+	}
+	else {
+	memset(sam_in_buf, 0, SAM_IN_BUF_LEN);
+	psam_in_buf = &sam_in_buf[0];
+
+	}
+	}
+	}
+}
+
+
+static void parce_sam_command(char* pcomm, char* pout) {
+	char* command = Ql_strstr(pcomm, "DATE?");
+	if (command) {
+		u8* buf[50];
+		ST_Time st;
+		Ql_GetLocalTime(&st);
+		u32 val = rtc_calendar_time_to_register_value(&st);
+		Ql_sprintf(buf, "SYNC>%d", val);
+		Ql_UART_Write(UART_PORT3, buf, Ql_strlen(buf));
+	}
+	command = Ql_strstr(pcomm, "EVTO:");
+	if (command) {
+
+		u8 output;
+		u8 state;
+		u8 desc;
+		EventData olocdata;
+		command += 5;
+		output = Ql_atoi(command);
+		command += 2;
+		state = Ql_atoi(command);
+		OUTD(">EVTO %d change:%d", output, state);
+		Ql_sprintf(pout, "EVTO>%d,%d\r\n", output, state);
+		GetOutDescripon(output, state, &desc);
+		TrigerEvent(desc, 0, &olocdata);
+		write_events(&olocdata);
+	}
+	command = Ql_strstr(pcomm, "EVTI:");
+	if (command) {
+		u8 output;
+		u8 state;
+		u8 desc;
+		EventData ilocdata;
+		command += 5;
+		output = Ql_atoi(command);
+		command += 2;
+		state = Ql_atoi(command);
+		OUTD(">EVTI %d change:%d", output, state);
+		Ql_sprintf(pout, "EVTI>%d,%d\r\n", output, state);
+		GetInputDescripon(output, state, &desc);
+		TrigerEvent(desc, 0, &ilocdata);
+		write_events(&ilocdata);
+	}
+	command = Ql_strstr(pcomm, "SYNC");
+	if (command) {
+		u32 pina[4];
+		u32 pini = 0;
+		u32 pino = 0;
+		command += 4;
+		if (Ql_strstr(command, "<")) {
+			OUTD(">Sync date time with SAMD20");
+		}
+		else
+			OUTD("!Error sync date time with SAMD20");
+		command++;
+		command = Ql_strstr(command, "PINI:");
+		if (command) {
+			command += 5;
+			pini = Ql_atoi(command);
+		}
+		command = Ql_strstr(command, "PINO:");
+		if (command) {
+			command += 5;
+			pino = Ql_atoi(command);
+		}
+		command = Ql_strstr(command, "PINA:");
+		if (command) {
+			command += 5;
+			u8 ind = 0;
+			char* pa = strtok(command, ",");
+			if (pa != NULL)
+			{
+				pina[ind++] = Ql_atoi(pa);
+				while ((pa = strtok(NULL, ",")) != NULL)
+				{
+					pina[ind++] = Ql_atoi(pa);
+				}
+			}
+		}
+		OUTD(">Sync SAMD20 is Ok. PINI:%d PINO:%d PINA:%d|%d|%d|%d", pini, pino, pina[0], pina[1], pina[2], pina[3]);
+		_n_state = STATE_REGISTER;
+	}
+	command = Ql_strstr(pcomm, "NET:");
+	if (command) {
+
+
+
+	}
+	command = Ql_strstr(pcomm, "DATE:");
+	if (command) {
+
+
+
+	}
+}
