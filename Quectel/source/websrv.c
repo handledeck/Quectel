@@ -459,8 +459,8 @@ s32 decode_b64_bin(const unsigned char *buftodec, u8 size, unsigned char *decbuf
 {
 	// выделяем память под временный буфер
 	//unsigned char *buftemp =(unsigned char*)Ql_GetMemory(bufsize);
-	u8 bufsize = 128;
-	unsigned char buftemp[128];
+	u8 bufsize = 1024;
+	unsigned char buftemp[1024];
 	Ql_memset(buftemp, '\0', bufsize);
 	Ql_memcpy(buftemp, buftodec, bufsize);
 

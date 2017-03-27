@@ -2,7 +2,7 @@
 
 #define BUFFER_COMMAND_LEN 512
 static char __buf_command[BUFFER_COMMAND_LEN];
-static u8 __buf_command_pos=0;
+static u16 __buf_command_pos=0;
 
 void text_bool(bool value, char* outtext) {
 	Ql_memset(outtext, 0, 5);
