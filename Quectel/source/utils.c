@@ -118,11 +118,17 @@ void set_config_form(char* conf) {
 				}
 			}
 			else if (Ql_strstr(pchar, "TSEND")) {
-				
 				pchar += 6;
 				if (Ql_isdigit(*pchar) != 0) {
 					u8 val = (u8)Ql_atoi(pchar);
 					__mdm_settings.t_send = val;
+				}
+			}
+			else if (Ql_strstr(pchar, "NUM")) {
+				pchar += 4;
+				if (Ql_isdigit(*pchar) != 0) {
+					u8 val = (u8)Ql_atoi(pchar);
+					__mdm_settings.num = val;
 				}
 			}
 			else if (Ql_strstr(pchar, "AIN")) {
@@ -193,6 +199,7 @@ void set_config_form(char* conf) {
 				Ql_memset(&__mdm_settings.sport, 0, 13);
 				Ql_memcpy(&__mdm_settings.sport, pchar, 13);
 			}
+
 			else if (Ql_strstr(pchar, "REBOOT")) {
 				char reboot = 255;
 				mdm_msg_send(&reboot, 1);
@@ -250,13 +257,13 @@ void get_config_form() {
 	Ql_sprintf(__locbuf,"CONFIG:APN:%s USER:%s PASS:%s DT:%d DEBOUNCE:%d DEBUG:%d EST:%d "
 		"IP:%s TCP:%d TSEND:%d AIN:%d DIN:%d DOUT:%d DOOR:%d LATIT:%.3f LONGIT:%.3f TZ:%d "
 		"CDIN:%d CDOUT:%d CAIN:%d;%d;%d;%d SRISE:%d SSET:%d SIM:%d GSM:%d GPRS:%d SIGNAL:%d DBZ:%d "
-		"IPOWN:%s SCHED:%s RAS:%d VER:%s SERIAL:%s\r\n",
+		"IPOWN:%s SCHED:%s RAS:%d VER:%s SERIAL:%s NUM:%d\r\n",
 		__mdm_settings.apn, __mdm_settings.apn_user, __mdm_settings.apn_password, time, __mdm_settings.deboung, __mdm_settings.debug,__mdm_settings.use_esttools,
 		ipa, __mdm_settings.tcp, __mdm_settings.t_send, __mdm_settings.ainn_active, __mdm_settings.dinn_active,
 		__mdm_settings.dout_active, (u16)~__mdm_settings.act_door_chanals, __mdm_settings.latidute, __mdm_settings.longitude, __mdm_settings.timezone,
 		cdir,__pins_output_value,__pins_anl_value[0], __pins_anl_value[1], __pins_anl_value[2], __pins_anl_value[3],
 		osunset,osunrise,simcard,creg,cgreg,rssi,__mdm_settings.deadband, __STR_LOC_IP_ADDR,__mdm_settings.schedulers,__mdm_settings.use_sched,
-		__VERSION__,__mdm_settings.sport);
+		__VERSION__,__mdm_settings.sport,__mdm_settings.num);
 	//Ql_UART_Write(UART_PORT1, __locbuf, Ql_strlen(__locbuf));
 	OUTDS(__locbuf);
 }

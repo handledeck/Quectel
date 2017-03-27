@@ -362,6 +362,7 @@ void CheckTypePacket(unsigned char* packet, u16 len) {
 }
 
 
+
 void ParseTextCommand(char* command, unsigned char len) {
 	command[len] = '\0';
 	char* pc;
@@ -413,6 +414,24 @@ void ParseTextCommand(char* command, unsigned char len) {
 		OUTD(">Set local time:%d-%d-%d %d:%d:%d result:%d", year, month, day, hour, minute, second, loctime);
 		//LOG(">Set local time:%d-%d-%d %d:%d:%d result:%d", year, month, day, hour, minute, second, loctime);
 	}
+	pc = Ql_strstr(command, "OUT");
+	if (pc) {
+		pc += 5;
+		if (Ql_isdigit(*pc) != 0) {
+			u8 val = (u8)Ql_atoi(pc);
+			u8 d[2] = { 5 };
+			if (val == 0) {
+				d[1] = 0;
+			}
+			else {
+				d[1] = 1;
+			}
+			__mdm_settings.use_sched = FALSE;
+			save_all_settings();
+			mdm_msg_send(&d[0], 2);
+		}
+	}
+	
 }
 
 int myAtoi(char *str)
