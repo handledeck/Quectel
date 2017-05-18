@@ -171,6 +171,19 @@ void extract(u8* data) {
 		OUTD("SAMDBG>%s", sbg);
 		break;
 	}
+	case update: {
+		data++;
+		u16 row;
+		Ql_memcpy(&row, data, 2);
+		OUTD("sam row:%d", row);
+		//if (__updater == U_SAM_WAIT) {
+		//}
+		//else if(__updater == U_M66_WAIT)
+		//{
+			//__updater = U_M66;
+		//}
+		break;
+	}
 	default:
 		break;
 	}

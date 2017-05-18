@@ -63,7 +63,7 @@ void DisplayMainMenu()
 	MENU("DIN:%s\r\nDOUT:%s\r\nAIN:%d %d %d %d\r\n", ind, outd, __pins_anl_value[0], __pins_anl_value[1], __pins_anl_value[2], __pins_anl_value[3]);
 	MENU("SUNRISE:%s SUNSET:%s\r\n", ss, sr);
 	MENU("SIM:%d GSM : %d GPRS : %d SIGNAL : %ddBm\r\n", simcard, creg, cgreg, rssi);
-	MENU("*****************************************************************\r\n");
+	MENU("***********************************************************\r\n");
 	MENU("Please make your selection\r\n");
 	MENU("0 - EXIT FROM MENU\r\n");
 	MENU("1 - APN (%s)\r\n", __mdm_settings.apn);

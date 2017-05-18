@@ -10,7 +10,8 @@ typedef enum {
 	THROUGH		=1,
 	WEB			=2,
 	DBG			=3,
-	EST			=4
+	EST			=4,
+	UPGRADE		=5
 }enum_socket_type;
 
 typedef struct

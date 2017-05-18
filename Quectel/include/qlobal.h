@@ -30,6 +30,7 @@
 #include "sunrise.h"
 #include "menu.h"
 #include <ql_wtd.h>
+#include <ql_fota.h>
 
 //I			input	16
 //O			output	8
@@ -56,6 +57,15 @@ char DBG_BUFFER[DBG_BUF_LEN];
 #define EST_EMPTY_TIMER			TIMER_ID_USER_START+5
 #define SYNC_SAM_MSG			TIMER_ID_USER_START+6
 #define SYSTEM_REBOOT			TIMER_ID_USER_START+7
+#define FILE_UPDATE_TRANSMIT	TIMER_ID_USER_START+8
+
+typedef enum
+{
+	U_NONE,
+	U_SAM,
+	U_MDM,
+}updater;
+
 
 static ST_Time __tm;
 extern bool __DEBUG__;
@@ -64,6 +74,7 @@ extern bool __LOG__;
 extern bool __EST_CONNECT__;
 extern char __STR_LOC_IP_ADDR[];
 
+extern updater	__updater__;
 extern u16		__pins_input_value;
 extern u8		__pins_output_value;
 extern u16		__pins_anl_value[4];
@@ -71,6 +82,17 @@ extern	bool	     __remote_dbg;
 extern s32		__rem_socket_dbg_id;
 extern s32		__rem_socket_th_id;
 extern u8		__power_state;
+
+
+#define OUTP(FORMAT,...)if(__DEBUG__) {\
+    Ql_memset(DBG_BUFFER, 0, DBG_BUF_LEN);\
+	Ql_sprintf(&DBG_BUFFER[0],FORMAT,##__VA_ARGS__);\
+	if(__remote_dbg){ \
+		Ql_SOC_Send(__rem_socket_dbg_id, DBG_BUFFER, Ql_strlen(DBG_BUFFER));} \
+	else{ \
+	 Ql_UART_Write(UART_PORT1, DBG_BUFFER, Ql_strlen(DBG_BUFFER));}}
+
+
 
 #define OUTD(FORMAT,...)if(__DEBUG__) {\
     Ql_memset(DBG_BUFFER, 0, DBG_BUF_LEN);\

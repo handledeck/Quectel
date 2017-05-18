@@ -28,7 +28,7 @@ enum EnFunc {
 	getsettings=6,
 	setsettings=7,
 	debug=100,
-	
+	update=254
 };
 
 void data_to_hex(u8* data, u8 count);

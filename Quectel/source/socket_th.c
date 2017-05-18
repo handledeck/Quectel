@@ -2,15 +2,18 @@
 
 
 
-s32 __socket_th_id=-1;
-s32 __socket_web_id=-1;
-s32 __socket_dbg_id=-1;
-s32 __socket_est_id=-1;
-u32 __tmr_array[7] = {1000, 5000,15000,30000,60000,150000 };
-u8  __tmr_index = 0;
-bool  __remote_dbg=FALSE;
-s32	  __rem_socket_dbg_id = -1;
+s32		__socket_th_id				=-1;
+s32		__socket_web_id				=-1;
+s32		__socket_dbg_id				=-1;
+s32		__socket_est_id				=-1;
+s32		__socket_upgrade_id			=-1;
+u32		__tmr_array[7] = {1000, 5000,15000,30000,60000,150000 };
+u8		__tmr_index = 0;
+bool	__remote_dbg=FALSE;
+s32		__rem_socket_dbg_id = -1;
 s32	  __rem_socket_th_id = -1;
+
+updater __updater__ = U_NONE;
 
 ST_SOC_Callback callback_socket_th =
 {
@@ -31,7 +34,7 @@ bool regiser_socket_th() {
 		__socket_th_id = Ql_SOC_Create(0, SOC_TYPE_TCP);
 		__socket_web_id= Ql_SOC_Create(0, SOC_TYPE_TCP);
 		__socket_dbg_id = Ql_SOC_Create(0, SOC_TYPE_TCP);
-		
+		__socket_upgrade_id = Ql_SOC_Create(0, SOC_TYPE_TCP);
 		if (__socket_th_id >= 0)
 		{
 			OUTD(">Create through socket id successfully,socketid=%d.", __socket_th_id);
@@ -48,7 +51,11 @@ bool regiser_socket_th() {
 			ret = Ql_SOC_Bind(__socket_dbg_id, __SCOCET_DBG_PORT__);
 			ret = Ql_SOC_Listen(__socket_dbg_id, __SOCKET_CLIENT_COUNT__);
 		}
-		
+		if (__socket_upgrade_id >= 0) {
+			OUTD(">Create upgrade socket id successfully,socketid=%d.", __socket_upgrade_id);
+			ret = Ql_SOC_Bind(__socket_upgrade_id, __SCOCET_UPGRADE_PORT__);
+			ret = Ql_SOC_Listen(__socket_upgrade_id, 1);
+		}
 	}
 	else
 	{
@@ -169,6 +176,8 @@ void socket_th_accept(s32 listenSocketId, s32 errCode, void* customParam) {
 	}
 	else if (listenSocketId == __socket_est_id)
 		tp = EST;
+	else if (listenSocketId == __socket_upgrade_id)
+		tp = UPGRADE;
 	s32 accept_socket=Ql_SOC_Accept(listenSocketId, &remote_ip, &remote_port);
 	s32 index=insert_socket(accept_socket, tp);
 	QlClient* client = get_client_by_socketid(accept_socket);
@@ -183,7 +192,14 @@ void socket_th_accept(s32 listenSocketId, s32 errCode, void* customParam) {
 		__rem_socket_th_id = accept_socket;
 		
 	}
+	if (tp == UPGRADE) {
+	
+	}
 }
+
+
+
+//u32 isize = 0;
 void socket_th_read(s32 socketId, s32 errCode, void* customParam) {
 	s32 index;
 	s32 ret;
@@ -261,12 +277,111 @@ void socket_th_read(s32 socketId, s32 errCode, void* customParam) {
 				break;
 			}
 			case THROUGH:{
-				
 				//OUTD("THROUGH");
 				//data_to_hex(client->recv_buf, ret);
 				u8 d[50] = { 2 };
 				Ql_memcpy(&d[1], client->recv_buf, ret);
 				mdm_msg_send(&d[0], ret+1);
+				break;
+			}
+			case UPGRADE: {
+				
+				char* pst = Ql_strstr(client->recv_buf, "_SAM_");
+				if (pst) {
+					s32 handle;
+					u32 writed;
+					Ql_FS_Delete(__FILE_SAM_UPDATE__);
+					handle = Ql_FS_Open(__FILE_SAM_UPDATE__, QL_FS_CREATE);
+					if (handle>0) {
+						//OUTD("Create sam file update is OK");
+						Ql_FS_Close(handle);
+						Ql_SOC_Send(socketId, &ret, 4);
+					}
+					else {
+						//OUTD("!Cand create sam file update:%d", handle);
+						Ql_SOC_Send(socketId, -1, 4);
+					}
+					__updater__ = U_SAM;
+					break;
+				}
+				pst = Ql_strstr(client->recv_buf, "_MDM_");
+				if(pst){
+					s32 handle;
+					u32 writed;
+					Ql_FS_Delete(__FILE_MDM_UPDATE__);
+					handle = Ql_FS_Open(__FILE_MDM_UPDATE__, QL_FS_CREATE);
+					if (handle>0) {
+						//OUTD("Create mdm file update is OK");
+						Ql_FS_Close(handle);
+						Ql_SOC_Send(socketId, &ret, 4);
+					}
+					else {
+						//OUTD("!Cand create mdm file update:%d", handle);
+						Ql_SOC_Send(socketId, -1, 4);
+					}
+					__updater__ = U_MDM;
+					break;
+				}
+				if(Ql_strstr(client->recv_buf, "_E_N_D"))
+				{
+					//OUTD("_E_N_D");
+						__mdm_settings.update = TRUE;
+						write_mdm_settings();
+						u8 d[2] = { 254,1 };
+						mdm_msg_send(&d[0], 2);
+						s32 fsam = Ql_FS_GetSize(__FILE_SAM_UPDATE__);
+						s32 fmdm = Ql_FS_GetSize(__FILE_MDM_UPDATE__);
+						OUTD("Recive update files mdm:%d sam:%d", fmdm, fsam);
+						Ql_Sleep(3000);
+						Ql_Reset(0);
+				}
+				else {
+					u8 dd[1024];
+					Ql_memset(dd, 0, 1024);
+					Ql_memcpy(dd, client->recv_buf, ret);
+					switch (__updater__)
+					{
+					case U_SAM: {
+						u32 writed;
+						s32 fz = Ql_FS_GetSize(__FILE_SAM_UPDATE__);
+						s32 handle = Ql_FS_Open(__FILE_SAM_UPDATE__, QL_FS_READ_WRITE);
+						if (handle > 0) {
+							
+							Ql_FS_Seek(handle, fz, QL_FS_FILE_BEGIN);
+							Ql_FS_Write(handle, &dd[0], ret, &writed);
+							Ql_FS_Flush(handle);
+							Ql_FS_Close(handle);
+							Ql_SOC_Send(socketId, &writed, 4);
+							//OUTD("write update sam OK:%d",writed);
+						}
+						else {
+							//OUTD("!Write update sam error:%d", handle);
+							Ql_SOC_Send(socketId, -1, 4);
+						}
+						break;
+					}
+					case U_MDM: {
+						u32 writed;
+						s32 fz = Ql_FS_GetSize(__FILE_MDM_UPDATE__);
+						s32 handle = Ql_FS_Open(__FILE_MDM_UPDATE__, QL_FS_READ_WRITE);
+						if (handle > 0) {
+							Ql_FS_Seek(handle, fz, QL_FS_FILE_BEGIN);
+							Ql_FS_Write(handle, &dd[0], ret, &writed);
+							Ql_FS_Flush(handle);
+							Ql_FS_Close(handle);
+							Ql_SOC_Send(socketId, &writed, 4);
+							//OUTD("write update mdm OK:%d",writed);
+						}
+						else {
+							//OUTD("!Write update mdm error:%d", handle);
+							Ql_SOC_Send(socketId, -1, 4);
+						}
+						break;
+					}
+					default:
+						break;
+					}
+				}
 				break;
 			}
 			default:

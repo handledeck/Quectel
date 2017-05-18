@@ -5,6 +5,8 @@
 
 #define __FILE_SETTINGS__		"mdm_settings.dat"
 #define __FILE_EVENTS__			"mdm_events.dat"
+#define __FILE_SAM_UPDATE__			"mdm_sam_update.dat"
+#define __FILE_MDM_UPDATE__			"mdm_mdm_update.dat"
 #define __COUNT_EVENTS__			30
 
 typedef struct {
@@ -15,24 +17,25 @@ typedef struct {
 	u8		t_send;
 	u8		ip[4];
 	u16		tcp;
-	u16		deboung;
-	char	log[6];
-	char	w_user[30];
-	char	w_password[30];
-	u8		num;
-	bool	use_esttools;
-	float	latidute;
-	float	longitude;
-	u8		timezone;
-	bool	lights;
-	u16		act_door_chanals;
-	u16		dinn_active;
-	u8		dout_active;
+	u16		deboung;			//100
+	char	log[6];				//106
+	char	w_user[30];			//136
+	char	w_password[30];		//166
+	u8		num;				//167
+	bool	use_esttools;		//168
+	float	latidute;			//172
+	float	longitude;			//176
+	u8		timezone;			//177
+	bool	lights;				//178
+	u16		act_door_chanals;	//180
+	u16		dinn_active;		//182
+	u8		dout_active;		
 	u8		ainn_active;
-	u8		deadband;
-	u8		schedulers[300];
-	bool	use_sched;
-	u8		sport[13];
+	u8		deadband;			//185
+	u8		schedulers[300];	//485
+	bool	use_sched;			//486
+	u8		sport[13];			//499
+	bool	update;				//500
 }type_settings;
 
 

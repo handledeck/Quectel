@@ -53,7 +53,9 @@ type_settings __mdm_settings = {
 	//schedulers
 	"AA==",
 	FALSE,
-	"9600,8,0,1"
+	"9600,8,0,1",
+	//update
+	FALSE
 };
 
 void save_all_settings() {
