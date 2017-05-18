@@ -109,43 +109,76 @@ void write_sam_settings() {
 }
 
 void write_mdm_settings() {
-	s32 handle;
-	u32 writed;
+	//s32 handle;
+	//u32 writed;
 
-	Ql_FS_Delete(__FILE_SETTINGS__);
-	handle = Ql_FS_Open(__FILE_SETTINGS__, QL_FS_CREATE);
-	if (handle>0) {
-		//OUTD("open file for write settings OK\r\n",NULL);
-		Ql_FS_Write(handle, (u8*)&__mdm_settings, sizeof(type_settings), &writed);
-		//OUTD("result write settings:%d\r\n",result);
-		Ql_FS_Close(handle);
-		//OUTD("Try APN:%s Login:%s Pass:%s\r\n",sf->APN,sf->User,sf->Pass);
-		/*Ql_DebugTrace("APN=%s IP=%d.%d.%d.%d TCP=%d USER=%s PASS=%s DEBUG=%d NUM=%d PWD=%s\r\n",
-		sf->APN,sf->IP[0],sf->IP[1],sf->IP[2],sf->IP[3],
-		sf->TCP,sf->User,sf->Pass,sf->Debug,sf->Num,sf->Pwd);*/
+	//Ql_FS_Delete(__FILE_SETTINGS__);
+	//handle = Ql_FS_Open(__FILE_SETTINGS__, QL_FS_CREATE);
+	//if (handle>0) {
+	//	//OUTD("open file for write settings OK\r\n",NULL);
+	//	Ql_FS_Write(handle, (u8*)&__mdm_settings, sizeof(type_settings), &writed);
+	//	//OUTD("result write settings:%d\r\n",result);
+	//	Ql_FS_Close(handle);
+	//	//OUTD("Try APN:%s Login:%s Pass:%s\r\n",sf->APN,sf->User,sf->Pass);
+	//	/*Ql_DebugTrace("APN=%s IP=%d.%d.%d.%d TCP=%d USER=%s PASS=%s DEBUG=%d NUM=%d PWD=%s\r\n",
+	//	sf->APN,sf->IP[0],sf->IP[1],sf->IP[2],sf->IP[3],
+	//	sf->TCP,sf->User,sf->Pass,sf->Debug,sf->Num,sf->Pwd);*/
 
+	//}
+	//else OUTD("!Write settings error:%d", handle);
+	s32 result = Ql_SecureData_Store(13, (u8*)&__mdm_settings, 500);
+	/*if (result == QL_RET_OK)
+	{
+		OUTD("Save settings OK");
 	}
-	else OUTD("!Write settings error:%d", handle);
+	else
+	{
+		OUTD("!Error mdm settings save");
+	}*/
 }
 void read_mdm_settings() {
-	s32 handle;
-	u32 readed;
-	//Ql_FileGetSize(FILE_SETTINGS,&readed);
-	//OUTD("try open file %s.File size:%d\r\n",FILE_SETTINGS,readed);
-	handle = Ql_FS_Open(__FILE_SETTINGS__, QL_FS_READ_ONLY);
-	if (handle>0) {
-		//OUTD("open file for read settings OK\r\n",NULL);
-		Ql_memset(&__mdm_settings, 0, sizeof(type_settings));
-		Ql_FS_Read(handle, (u8*)&__mdm_settings, readed, &readed);
-		//OUTD("result read settings:%d\r\n",result);
-		Ql_FS_Close(handle);
-		/*Ql_DebugTrace("APN=%s IP=%d.%d.%d.%d TCP=%d USER=%s PASS=%s DEBUG=%d NUM=%d PWD=%s\r\n",
-		sf->APN,sf->IP[0],sf->IP[1],sf->IP[2],sf->IP[3],
-		sf->TCP,sf->User,sf->Pass,sf->Debug,sf->Num,sf->Pwd);*/
+	//s32 handle;
+	//u32 readed;
+	////Ql_FileGetSize(FILE_SETTINGS,&readed);
+	////OUTD("try open file %s.File size:%d\r\n",FILE_SETTINGS,readed);
+	//handle = Ql_FS_Open(__FILE_SETTINGS__, QL_FS_READ_ONLY);
+	//if (handle>0) {
+	//	//OUTD("open file for read settings OK\r\n",NULL);
+	//	Ql_memset(&__mdm_settings, 0, sizeof(type_settings));
+	//	Ql_FS_Read(handle, (u8*)&__mdm_settings, readed, &readed);
+	//	//OUTD("result read settings:%d\r\n",result);
+	//	Ql_FS_Close(handle);
+	//	/*Ql_DebugTrace("APN=%s IP=%d.%d.%d.%d TCP=%d USER=%s PASS=%s DEBUG=%d NUM=%d PWD=%s\r\n",
+	//	sf->APN,sf->IP[0],sf->IP[1],sf->IP[2],sf->IP[3],
+	//	sf->TCP,sf->User,sf->Pass,sf->Debug,sf->Num,sf->Pwd);*/
+	//}
+	//else {
+	//	//OUTD("!Setting file not found. Create new default file",NULL);
+	//	write_mdm_settings();
+	//}
+	u8 config[7];
+	Ql_memset(&config[0], 0, 7);
+	s32 result = Ql_SecureData_Read(1, &config[0], 7);
+	if (result > 0) {
+		if (Ql_strstr(&config[0], "CONFIG")) {
+			result=Ql_SecureData_Read(13, (u8*)&__mdm_settings, 500);
+			if (result > 0) {
+				OUTD(">Read MDM settings OK");
+			}
+			else {
+
+				OUTD("!Read MDM settings ERROR");
+				write_mdm_settings();
+			}
+		}
+		else {
+			write_mdm_settings();
+			result = Ql_SecureData_Store(1,"CONFIG", 6);
+			OUTD(">MDM config is empty. Create default");
+		}
 	}
 	else {
-		//OUTD("!Setting file not found. Create new default file",NULL);
-		write_mdm_settings();
+		OUTD("!Error read MDM settings");
 	}
 }
 

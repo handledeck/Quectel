@@ -137,17 +137,9 @@ void update_sam() {
 	}
 }
 
+void init_mdm() {
 
-void proc_main_task(s32 taskId)
-{
-	char state[30];
-	Ql_memset(state, 0, 30);
-	Ql_GetCoreVer((u8*)state, 30);
-	read_mdm_settings();
-	
-	
-	
-	if (__mdm_settings.update){// check_update()) {
+	if (__mdm_settings.update) {// check_update()) {
 		
 		Ql_UART_Register(UART_PORT3, cb_update, NULL);
 		Ql_UART_Register(UART_PORT1, &callback_debug_port, NULL);
@@ -167,9 +159,8 @@ void proc_main_task(s32 taskId)
 		Ql_Timer_Register(SYSTEM_REBOOT, system_reboot, NULL);
 		Ql_UART_Open(UART_PORT1, 115200, FC_NONE);
 		Ql_UART_Open(UART_PORT3, 115200, FC_NONE);
-		read_mdm_settings();
 		accept_settings();
-		check_event_file();
+		//check_event_file();
 		//
 		//delete_mdm_settings();
 		//
@@ -178,7 +169,13 @@ void proc_main_task(s32 taskId)
 		client_socket_id_init();
 		Ql_Timer_Start(GPRS_REGISTER_TIMER, TIME_GPRS_REGISTER, FALSE);
 	}
-	
+}
+
+void proc_main_task(s32 taskId)
+{
+	char state[30];
+	Ql_memset(state, 0, 30);
+	Ql_GetCoreVer((u8*)state, 30);
 	OUTD("\r\n\r\nCore version:%s", state);
 	
 	ST_MSG msg;
@@ -191,6 +188,8 @@ void proc_main_task(s32 taskId)
 		case MSG_ID_RIL_READY: {
 			OUTD("RIL is ready");
 			Ql_RIL_Initialize();
+			read_mdm_settings();
+			init_mdm();
 			break;
 		}
 		case MSG_ID_URC_INDICATION:
@@ -200,7 +199,7 @@ void proc_main_task(s32 taskId)
 			{
 			case URC_SYS_INIT_STATE_IND:
 				parse_system_state(msg.param2, state);
-				OUTD(">Sys Init Status:%s", state);
+				//OUTD(">Sys Init Status:%s", state);
 				break;
 			case URC_SIM_CARD_STATE_IND:
 				parse_sim_state(msg.param2, state);
@@ -215,8 +214,18 @@ void proc_main_task(s32 taskId)
 					//Ql_RIL_SendATCmd("AT+CCLK?", 8, time_handler_callback, NULL, 0);
 					//Ql_RIL_SendATCmd("AT+CTZU=3", 9, NULL, NULL, 0);
 					if(__UP_DATE__) {
-						__len_sam = Ql_FS_GetSize(__FILE_SAM_UPDATE__);
+						if (Ql_FS_Check(__FILE_SAM_UPDATE__) == QL_RET_OK) {
+							__len_sam = Ql_FS_GetSize(__FILE_SAM_UPDATE__);
 							update_sam();
+						}
+						else {
+							OUTD("!File update not found. Reboot");
+							__mdm_settings.update = FALSE;
+							write_mdm_settings();
+							Ql_UART_Write(UART_PORT3, "UPDATE:0", 8);
+							Ql_Sleep(1000);
+							Ql_Reset(0);
+						}
 					}
 					else
 					{
@@ -228,9 +237,6 @@ void proc_main_task(s32 taskId)
 						mdm_msg_send(&d[0], 1);
 						Ql_Timer_Start(SYNC_SAM_MSG, SAM_TIMEOUT_SYNC, TRUE);
 					}
-					
-					//__DEBUG__ = FALSE;
-					//DisplayMainMenu();
 					break;
 				}
 				OUTD(">GPRS Network Status:%s", state);
@@ -299,11 +305,11 @@ static s32 get_time_synx_cmd(char* line, u32 len, void* userdata) {
 	if (pHead!=NULL) {
 		Ql_sscanf(pHead, "%*[^:]: %d", &result);
 		if (result == 0) {
-			OUTD("Set auto sync GPRS modem: CTZU=%d", result);
+			OUTD(">Set auto sync GPRS modem: CTZU=%d", result);
 			__run = TRUE;
 		}
 		else {
-			OUTD("Time sync modem: CTZU=%d", result);
+			OUTD(">Time sync modem: CTZU=%d", result);
 			__run = TRUE;
 			__need_reboot = FALSE;
 		}
@@ -312,7 +318,7 @@ static s32 get_time_synx_cmd(char* line, u32 len, void* userdata) {
 		char* peror = Ql_RIL_FindString(line, len, "+CME ERROR:");
 		if (peror!=NULL) {
 			Ql_sscanf(peror, "%*[^:]: %d[\r\n]", &result);
-			OUTD("Time sync modem error: CME ERROR:%d", result);
+			OUTD("!Time sync modem error: CME ERROR:%d", result);
 			__run = TRUE;
 		}
 	}
