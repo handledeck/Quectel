@@ -38,8 +38,9 @@
 //L			lights
 //D			doors
 //C			counter
+//FOTA		Remote update support
 
-#define __VERSION__	"I16O2A2-LDC-3"
+#define __VERSION__	"I16O2A2-LDC-3-FOTA"
 
 #define MSG_TCP_REGISTER   (MSG_ID_USER_START + 3)
 #define DEBUG_ENABLE 1

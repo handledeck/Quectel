@@ -127,14 +127,14 @@ void write_mdm_settings() {
 	//}
 	//else OUTD("!Write settings error:%d", handle);
 	s32 result = Ql_SecureData_Store(13, (u8*)&__mdm_settings, 500);
-	/*if (result == QL_RET_OK)
+	if (result == QL_RET_OK)
 	{
 		OUTD("Save settings OK");
 	}
 	else
 	{
 		OUTD("!Error mdm settings save");
-	}*/
+	}
 }
 void read_mdm_settings() {
 	//s32 handle;
@@ -178,7 +178,16 @@ void read_mdm_settings() {
 		}
 	}
 	else {
-		OUTD("!Error read MDM settings");
+		
+		result = Ql_SecureData_Store(1, "CONFIG", 6);
+		if (result > 0) {
+			OUTD(">MDM config is empty. Create default");
+			write_mdm_settings();
+		}
+		else {
+			OUTD("!Error create default settings");
+		}
+		
 	}
 }
 

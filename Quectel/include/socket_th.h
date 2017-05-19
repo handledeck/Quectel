@@ -27,6 +27,6 @@ bool regiser_socket_th();
 void est_socket_connect(u32 timerId, void* param);
 void est_wait_confirm(u32 timerId, void* param);
 void est_empty_msg(u32 timerId, void* param);
-bool check_update();
+void timeout_update(void);
 
 #endif

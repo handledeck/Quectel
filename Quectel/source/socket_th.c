@@ -197,7 +197,9 @@ void socket_th_accept(s32 listenSocketId, s32 errCode, void* customParam) {
 	}
 }
 
-
+void timeout_update(void) {
+	Ql_SOC_Close(__socket_upgrade_id);
+}
 
 //u32 isize = 0;
 void socket_th_read(s32 socketId, s32 errCode, void* customParam) {
@@ -320,6 +322,7 @@ void socket_th_read(s32 socketId, s32 errCode, void* customParam) {
 						Ql_SOC_Send(socketId, -1, 4);
 					}
 					__updater__ = U_MDM;
+					Ql_Timer_Start(FILE_UPDATE_TRANSMIT, 5000, FALSE);
 					break;
 				}
 				if(Ql_strstr(client->recv_buf, "_E_N_D"))
@@ -334,6 +337,7 @@ void socket_th_read(s32 socketId, s32 errCode, void* customParam) {
 						OUTD("Recive update files mdm:%d sam:%d", fmdm, fsam);
 						Ql_Sleep(3000);
 						Ql_Reset(0);
+						Ql_Timer_Stop(FILE_UPDATE_TRANSMIT);
 				}
 				else {
 					u8 dd[1024];
@@ -381,6 +385,8 @@ void socket_th_read(s32 socketId, s32 errCode, void* customParam) {
 					default:
 						break;
 					}
+					Ql_Timer_Stop(FILE_UPDATE_TRANSMIT);
+					Ql_Timer_Start(FILE_UPDATE_TRANSMIT, 5000, FALSE);
 				}
 				break;
 			}

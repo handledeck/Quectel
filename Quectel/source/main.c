@@ -112,7 +112,7 @@ void update_sam() {
 		}
 		else
 		{
-			OUTD("\r\n SAM update good");
+			//OUTD("\r\n SAM update good");
 			__pos = 0;
 			__len_sam = Ql_FS_GetSize(__FILE_MDM_UPDATE__);
 			Ql_memset((void *)(&FotaConfig), 0, sizeof(ST_FotaConfig));
@@ -127,7 +127,7 @@ void update_sam() {
 					Ql_Reset(0);
 				}
 				else
-					OUTP("\r update mdm:%d%%", ((__pos) * 100) / __len_sam);
+					OUTP("\r update mdm:%d %%", ((__pos) * 100) / __len_sam);
 			}
 			Ql_Sleep(5);
 		}
@@ -157,6 +157,8 @@ void init_mdm() {
 		Ql_Timer_Register(EST_EMPTY_TIMER, est_empty_msg, NULL);
 		Ql_Timer_Register(SYNC_SAM_MSG, tmr_sam_cync, NULL);
 		Ql_Timer_Register(SYSTEM_REBOOT, system_reboot, NULL);
+		Ql_Timer_Register(FILE_UPDATE_TRANSMIT, timeout_update, NULL);
+		
 		Ql_UART_Open(UART_PORT1, 115200, FC_NONE);
 		Ql_UART_Open(UART_PORT3, 115200, FC_NONE);
 		accept_settings();
@@ -190,6 +192,7 @@ void proc_main_task(s32 taskId)
 			Ql_RIL_Initialize();
 			read_mdm_settings();
 			init_mdm();
+			//OUTD("update:%s", __mdm_settings.update == TRUE ? "TRUE" : "FALSE");
 			break;
 		}
 		case MSG_ID_URC_INDICATION:
@@ -199,7 +202,7 @@ void proc_main_task(s32 taskId)
 			{
 			case URC_SYS_INIT_STATE_IND:
 				parse_system_state(msg.param2, state);
-				//OUTD(">Sys Init Status:%s", state);
+				OUTD(">Sys Init Status:%s", state);
 				break;
 			case URC_SIM_CARD_STATE_IND:
 				parse_sim_state(msg.param2, state);
