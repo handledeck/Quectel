@@ -179,6 +179,7 @@ void proc_main_task(s32 taskId)
 	Ql_memset(state, 0, 30);
 	Ql_GetCoreVer((u8*)state, 30);
 	OUTD("\r\n\r\nCore version:%s", state);
+	OUTD("Version controller:%s", __VERSION__);
 	
 	ST_MSG msg;
 	while (1)
